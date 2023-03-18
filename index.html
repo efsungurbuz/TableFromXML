@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link lang="html" rel="stylesheet" href="style.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script>
+
+    $(document).ready(function () {
+      $.ajax({
+        type: "GET",
+        url: "products.txt",
+        dataType: "xml",
+
+        success: function (xml) {
+          var table = "<table class='3d-table'><thead class='3d-table'><tr class='tr-3d'><th>Ürün Kodu</th><th>Ürün Adı</th><th>Kategori</th><th>Ürün Görseli</th><th>Marka</th><th>Ürün Linki</th></tr></thead><tbody>";
+
+          $(xml).find("product").each(function () {
+            var brand = $(this).find("brand").text();
+            var imageSource = $(this).find("img_item").first().text();
+            var seoLink = $(this).find("seo_link").text();
+
+            table += "<tr class='" + brand + "'><td>" + $(this).find("ws_code").text() + "</td><td class='name-td'>" + $(this).find("name").text() + "</td><td>" + $(this).find("category_path").text() + "</td><td>" + "<img width='200' height='200' src='" + imageSource + "'>" + "</td><td>" + brand + "</td><td>" + `<button class='product-btn-3d' type='button' target='_blank'><a href=${seoLink}>Ürüne Gidiniz </a> </button>` + "</td></tr>";
+          });
+
+
+          table += "</tbody></table>";
+          $("#product_table").html(table);
+
+          $("#brand_select").on("change", function () {
+            var selectedBrand = $(this).val();
+            if (selectedBrand == "All") {
+              $("#product_table tr").show();
+            } else {
+              $("#product_table tr").hide();
+              $(".tr-3d").show();
+              $("#product_table tr." + selectedBrand).show();
+            }
+          });
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+
+  <div style="text-align: center;">
+    <h2>3D Urunlerimizden Hangisi Sizin Icin Uygun?</h2>
+    <select id="brand_select">
+      <option value="All">3D Yazıcılar</option>
+      <option value="BenMaker">BenMaker</option>
+      <option value="Alya">Alya</option>
+      <option value="Makeblock">Makeblock</option>
+      <option value="Creality.3D">Creality 3D</option>
+      <option value="Anycubic">Anycubic</option>
+    </select>
+  </div>
+  <div id="product_table"></div>
+</body>
+</html>
